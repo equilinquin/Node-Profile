@@ -1,59 +1,4 @@
-const inquirer = require("inquirer");
-const fs = require("fs");
-const util = require("util");
-const writeFileAsync = util.promisify(fs.writeFile);
-const axios = require("axios")
-
-const colors = {
-  green: {
-    wrapperBackground: "#E6E1C3",
-    headerBackground: "#C1C72C",
-    headerColor: "black",
-    photoBorderColor: "#black",
-    backgroundImg: "Images/green_back.jpeg"
-  },
-  blue: {
-    wrapperBackground: "#5F64D3",
-    headerBackground: "#26175A",
-    headerColor: "white",
-    photoBorderColor: "#73448C",
-    backgroundImg: "Images/blue_back.jpeg"
-  },
-  pink: {
-    wrapperBackground: "#879CDF",
-    headerBackground: "#FF8374",
-    headerColor: "white",
-    photoBorderColor: "#FEE24C",
-    backgroundImg: "Images/pink_back.jpeg"
-  },
-  red: {
-    wrapperBackground: "#DE9967",
-    headerBackground: "#870603",
-    headerColor: "white",
-    photoBorderColor: "white",
-    backgroundImg: "Images/red_back.jpeg"
-  }
-};
-
-const questions = [    
-    {
-      type: "input",
-      name: "username",
-      message: "What is your GitHub username?"
-    },
-    {
-      type: "input",
-      name: "color",
-      message: "Do you like green, blue, pink, or red? (Choose One)"
-    }
-  
-];
-function promptUser() {
-  return inquirer.prompt(questions);
-};
-
-function createHTML(data, data1, color){
-return (`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -89,12 +34,12 @@ return (`<!DOCTYPE html>
         }
 
         .wrapper {
-            background-color: ${colors[color].wrapperBackground};
+            background-color: #DE9967;
             padding-top: 100px;
         }
 
         body {
-            background-image: url(${colors[color].backgroundImg});
+            background-image: url(Images/red_back.jpeg);
             -webkit-print-color-adjust: exact !important;
             font-family: 'Cabin', sans-serif;
         }
@@ -154,8 +99,8 @@ return (`<!DOCTYPE html>
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            background-color: ${colors[color].headerBackground};
-         color: ${colors[color].headerColor};
+            background-color: #870603;
+         color: white;
             padding: 10px;
             width: 95%;
             border-radius: 6px;
@@ -167,7 +112,7 @@ return (`<!DOCTYPE html>
             border-radius: 50%;
             object-fit: cover;
             margin-top: -75px;
-            border: 6px solid ${colors[color].photoBorderColor};
+            border: 6px solid white;
             box-shadow: rgba(0, 0, 0, 0.3) 4px 1px 20px 4px;
         }
         
@@ -218,8 +163,8 @@ return (`<!DOCTYPE html>
         .card {
             padding: 20px;
             border-radius: 6px;
-            background-color: ${colors[color].headerBackground};
-           color: ${colors[color].headerColor};
+            background-color: #870603;
+           color: white;
             margin: 20px;
         }
 
@@ -248,31 +193,31 @@ return (`<!DOCTYPE html>
         <div class="wrapper">
             <div class="photo-header">
                 <img class="photo-header image"
-                    src="${data.avatar_url}">
+                    src="https://avatars1.githubusercontent.com/u/54249111?v=4">
                 <br>
                 <h1>Hello!!!</h1>
-                <h2>My GitHub username is ${data.login}</h2>
+                <h2>My GitHub username is equilinquin</h2>
                     <h5>
                         <i class="fas fa-location-arrow">
-                            <a href="https://www.google.com/maps/place/${data.location}"><span>Location</span></i></a>
+                            <a href="https://www.google.com/maps/place/Beaverton"><span>Location</span></i></a>
                         <i class="fab fa-github">
-                            <a href="${data.html_url}"><span>GitHub</span></i></a>
+                            <a href="https://github.com/equilinquin"><span>GitHub</span></i></a>
                         <i class="fas fa-rss">
-                            <a href="${data.blog || "dummyurl"}"><span>Blog</span></i></a>
+                            <a href="https://equilinquin.github.io/Portfolio-boot/"><span>Blog</span></i></a>
                     </h5>
                 </div>
             </div>
         
 
         <main>
-            <h3>Bio: ${data.bio}</h3>
+            <h3>Bio: Full Stack Web Developer, enrolled at the University of Oregon boot-camp program.</h3>
 
             <div class="row">
                 <div class="col s12 m5">
                     <div class="card card-panel">
                         <h4>Public Repositories
                             <br>
-                            ${data.public_repos}
+                            14
                         </h4>
                     </div>
                 </div>
@@ -280,7 +225,7 @@ return (`<!DOCTYPE html>
                     <div class="card card-panel">
                         <h4>Followers
                             <br>
-                            ${data.followers}
+                            8
                         </h4>
                     </div>
                 </div>
@@ -290,7 +235,7 @@ return (`<!DOCTYPE html>
                     <div class="card card-panel">
                         <h4>GitHub Stars
                             <br>
-                            ${data1.length}
+                            4
                         </h4>
                     </div>
                 </div>
@@ -298,7 +243,7 @@ return (`<!DOCTYPE html>
                     <div class="card card-panel">
                         <h4>Following
                             <br>
-                            ${data.following}
+                            5
                         </h4>
                     </div>
                 </div>
@@ -311,32 +256,4 @@ return (`<!DOCTYPE html>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 
-</html>`)
-}
-
-
-promptUser().then(ans=>{
-  const one = axios.get(`https://api.github.com/users/${ans.username}`);
-  const two = axios.get(`https://api.github.com/users/${ans.username}/watched`);
-
-  axios.all([one, two]).then(axios.spread((...res) => {
-    const resOne = res[0];
-    const resTwo = res[1];
-
-    writeToFile('profile.html', createHTML(resOne.data, resTwo.data, ans.color))
-  })).catch((err) => {
-    if(err) {
-      throw(err)
-    }
-  })
-
-})
-
-
-function writeToFile(fileName, data) {
- writeFileAsync(fileName, data).then(()=>{
-  fs.readFile('./test.html', 'utf8', (err, data)=>{
-    writeFileAsync('test.pdf', data)
-  })
- })
-}
+</html>
