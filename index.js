@@ -1,12 +1,11 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
-const electron = require("electron");
+const electron = require('electron');
 const convertFactory = require('electron-html-to');
 const util = require("util");
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
 const axios = require("axios");
-const open = require("open");
 const generateHTML = require("./generateHTML");
 
 
@@ -55,10 +54,8 @@ promptUser().then(ans => {
             }
             result.stream.pipe(fs.createWriteStream("profile.pdf"));
             conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
-            (async () => {
-  await open('profile.pdf', {app: 'google chrome'})
-});
-});
+        
+          });
           });
         });
       })

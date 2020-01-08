@@ -19,6 +19,6 @@ Errors that occured:
     -electron-html-to showed errors of the module not being found.  Resolved by creating a electron-html-to.d.ts file with the a declaration in the file.
     -PDF file was not created because of "busy or locked" error.  Resolved over time.
 
-Original profile.html and profile.pdf files are from using my own information.  Noticed that the html file overwrites but must delete pdf file to generate a new pdf file.
+Original profile.html and profile.pdf files are from using my own information.  Noticed that the html file and pdf file overwrites when picked new color.
 
 Custom css does not show up on pdf files.  Tested code and it works, but 'Worker Timeout, the worker process does not respond after 10000 ms' error shows up.
