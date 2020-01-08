@@ -4,9 +4,11 @@ const electron = require("electron");
 const convertFactory = require('electron-html-to');
 const util = require("util");
 const writeFileAsync = util.promisify(fs.writeFile);
+const readFileAsync = util.promisify(fs.readFile);
 const axios = require("axios");
+const open = require("open");
 const generateHTML = require("./generateHTML");
-const gi = require("./gitignore");
+
 
 const questions = [
   {
@@ -35,38 +37,33 @@ promptUser().then(ans => {
         const resOne = res[0];
         const resTwo = res[1];
 
-        writeToFile(
+        writeFileAsync(
           "profile.html",
           generateHTML(resOne.data, resTwo.data, ans.color)
-        );
+        )
+        .then(() => {
+          readFileAsync('profile.html', 'utf8').then((htmlStr) => { 
+            
+            const conversion = convertFactory({
+              converterPath: convertFactory.converters.PDF,
+              allowLocalFilesAccess: true
+            });
+    
+            conversion({ html: htmlStr }, function(err, result) {
+              if (err) {
+                return console.error(err);
+            }
+            result.stream.pipe(fs.createWriteStream("profile.pdf"));
+            conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
+            (async () => {
+  await open('profile.pdf', {app: 'google chrome'})
+});
+});
+          });
+        });
       })
-    )
-    .catch(err => {
-      if (err) {
-        throw err;
-      }
-    });
+    );
 });
 
 
 
-const conversion = convertFactory({
-  converterPath: convertFactory.converters.PDF,
-  allowLocalFilesAccess: true
-});
-
-function writeToFile(fileName, data) {
-  writeFileAsync(fileName, data).then(() => {
-    conversion({ html: "./profile.html" }, function(err, result) {
-      if (err) {
-        return console.error(err);
-      }
-      console.log(result.numberOfPages);
-      console.log(result.logs);
-      result.stream.pipe(fs.createWriteStream("profile.pdf"));
-      conversion.kill(); // necessary if you use the electron-server strategy, see bellow for details
-    });
-
-    //writeFileAsync('profile.pdf', data)
-  });
-}
