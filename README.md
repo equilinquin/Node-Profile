@@ -22,3 +22,4 @@ Errors that occured:
 Original profile.html and profile.pdf files are from using my own information.  Noticed that the html file and pdf file overwrites when picked new color.
 
 Custom css does not show up on pdf files.  Tested code and it works, but 'Worker Timeout, the worker process does not respond after 10000 ms' error shows up.
+
